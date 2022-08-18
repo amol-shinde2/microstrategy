@@ -1,0 +1,335 @@
+.btn-link {
+    font-weight: bold;
+}
+
+.bookmarklistdropbtn {
+    height: 40px;
+    width: 40px;
+    border-radius: 50px;
+    margin-top: 2;
+}
+
+.dropdown-content-bm {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    width: 230px;
+    padding-bottom: 10px;
+}
+
+.dropdown-content-create-bm {
+    display: none;
+    background-color: #f1f1f1;
+    overflow: auto;
+    z-index: 1;
+    margin-left: -15px;
+    border: solid #0e6ff9 2px;
+    border-radius: 5px;
+    margin-right: 10px;
+}
+
+.maximizelistdropbtn {
+    height: 40px;
+    width: 40px;
+    border-radius: 50px;
+    margin-top: 2;
+}
+
+.minimizeIcon {
+    height: 40px;
+    width: 40px;
+    border-radius: 50px;
+    margin-top: 2;
+}
+
+.userdropbtn {
+    height: 40px;
+    width: 40px;
+    border-radius: 50px;
+    margin-top: 2;
+}
+
+.widgetlistdropbtn {
+    height: 40px;
+    width: 40px;
+    border-radius: 50px;
+    margin-top: 2;
+}
+
+.projectlistdropbtn {
+    height: 40px;
+    width: 40px;
+    border-radius: 50px;
+    margin-top: 2;
+}
+
+.plusIcon {
+    height: 40px;
+    width: 40px;
+    border-radius: 50px;
+    margin-top: 2;
+}
+
+.authoringIcon {
+    height: 40px;
+    width: 40px;
+    border-radius: 50px;
+    margin-top: 2;
+}
+
+.taskIcon {
+    height: 40px;
+    width: 40px;
+    border-radius: 50px;
+    margin-top: 2;
+}
+
+.bookmarkIcon {
+    height: 40px;
+    width: 40px;
+    border-radius: 50px;
+    margin-top: 2;
+}
+
+.panellistdropbtn {
+    height: 40px;
+    width: 40px;
+    border-radius: 50px;
+    margin-top: 2;
+}
+
+.exportdropbtn {
+    height: 50px;
+    width: 50px;
+    border-radius: 50px;
+    margin-left: 510;
+}
+
+.userDropdown {
+    position: relative;
+    display: inline-block;
+    margin-left: -18
+}
+
+.exportDropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    z-index: 1;
+}
+
+.dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content-pl {
+    display: none;
+    position: absolute;
+    z-index: 1;
+}
+
+.dropdown-content-pl a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content-panellist {
+    display: none;
+    position: absolute;
+    z-index: 1;
+}
+
+.dropdown-content-panellist a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.dropdown-content-usericon {
+    display: none;
+    position: absolute;
+    background-color: #f1f1f1;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.dropdown-content-usericon a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.userDropdown a:hover {
+    background-color: #ddd;
+}
+
+.exportDropdown a:hover {
+    background-color: #ddd;
+}
+
+.show {
+    display: flex;
+    flex-direction: column;
+}
+
+.show1 {
+    display: flex;
+    flex-direction: column;
+    margin-left: 520px;
+}
+
+.dropdown-submenu {
+    position: relative;
+}
+
+.dropdown-submenu button::after {
+    transform: rotate(90deg);
+    position: absolute;
+    right: 85px;
+    top: 15px;
+}
+
+.dropdown-submenu .dropdown-menu {
+    top: 0;
+    margin-left: .1rem;
+    margin-right: .1rem;
+    left: -161px;
+}
+
+#navbarNavDropdown {
+    margin-right: 20px
+}
+
+.dalia {
+    border-radius: 8px;
+    margin-bottom: 2px;
+    width: 120px;
+}
+
+.username {
+    padding-bottom: 2px;
+    border-bottom: 2px solid darkblue;
+}
+
+input[type="search"]::placeholder {
+    text-align: center;
+}
+
+.msfContainer {
+    margin-left: 270px;
+}
+
+#daliaDossierList_chosen {
+    color: black;
+}
+
+.createBookmark-Icon {
+    border: none;
+    margin-left: 160px;
+    margin-top: 2px;
+}
+
+.shareBookmark-Icon {
+    border: none;
+}
+
+.editBookmark-Icon {
+    border: none;
+}
+
+.deleteBookmark-Icon {
+    border: none;
+}
+
+.bookmarkList {
+    margin-left: 65px;
+    margin-top: 5px;
+}
+
+.bookmark-name {
+    margin-bottom: 5px;
+    border-radius: 5px;
+    border: none;
+    margin-top: 6px;
+    margin-left: 8px;
+}
+
+#createBookmarkListDropdown {
+    margin-left: -21px;
+}
+
+.bm-save-cancel-btngroup {
+    margin-bottom: 10px;
+    margin-left: 4px;
+}
+
+.bookmark-cancel {
+    border: none;
+    color: #0e6ff9;
+}
+
+.bookmark-save {
+    border: none;
+    color: #0e6ff9;
+}
+
+.bookmarkButton {
+    border: none;
+    color: blue;
+}
+
+.hideshowfilters {
+    height: 40px;
+    width: 40px;
+    border-radius: 50px;
+    margin-top: 2;
+}
+
+#vizList_chosen {
+    width: 200px;
+    color: black;
+}
+
+#projectList_chosen {
+    width: 200px;
+    color: black;
+}
+
+#panellist_chosen {
+    width: 200px;
+    color: black;
+}
+
+#panellist {
+    display: none;
+}
+
+.dalia {
+    border-radius: 8px;
+    margin-bottom: 2px;
+    width: 120px;
+}
+
+.msfContainer {
+    margin-left: 270px;
+}
+
+.msfapply-btn {
+    margin-right: 50px;
+    border-radius: 5px;
+}

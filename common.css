@@ -3,7 +3,6 @@
 .headerContainer {
     display: flex;
     align-items: center;
-    /* justify-content: center; */
     height: 50px;
     width: 100%;
     background-color: darkblue;
@@ -103,32 +102,7 @@
 }
 
 .panel {
-    height: 40px;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    background-color: darkblue;
-    color: #fff;
-    border-radius: 0.25rem;
-    border-color: #0d6efd;
-}
-
-.vizlist {
-    height: 40px;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    background-color: darkblue;
-    color: #fff;
-    border-radius: 0.25rem;
-    border-color: #0d6efd;
-    margin-top: 10px;
-}
-
-.projectList {
-    height: 40px;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    background-color: darkblue;
-    color: #fff;
-    border-radius: 0.25rem;
-    border-color: #0d6efd;
-    margin-top: 10px;
+    display: none;
 }
 
 .filterControlLink {
@@ -148,8 +122,6 @@
     height: 50px;
     min-width: fit-content;
     border: 0px;
-    /* font-weight: bold; */
-    /* background-color: aqua; */
 }
 
 .tab-btn {
@@ -160,17 +132,6 @@
 
 
 /* Show Filters Vertically */
-
-
-/* .headerContainer {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 50px;
-    width: 100%;
-    background-color: blue;
-    color: white;
-} */
 
 .mainContainerhrz {
     display: flex;
@@ -252,12 +213,9 @@
 }
 
 .filterControlLinkshrz {
-    /* margin: 10px;
-    padding: 10px; */
     display: flex;
     margin-top: -5px;
     margin-left: 10px;
-    /* margin-left: -20px; */
     margin: 5px;
 }
 

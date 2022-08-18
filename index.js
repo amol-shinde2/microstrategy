@@ -1,11 +1,12 @@
-// let baseurl = "https://mobiledossier.microstrategy.com/MicroStrategyLibrary/app"
-// let projid = localStorage.setItem ("projid");
-// let dossierid = localStorage.setItem ("dossierid");
-
 let url = "";
 let dossier; // Variable to store the dossier created. Used by Event Handler do not remove!
 let config; // Variable to store the configuration settings for dossier.
 const attributeSelector = "attributeSelector"; // Variable to store string for attributeSelector filter type
+
+var projectID = sessionStorage.getItem("projid")
+var dossierID = sessionStorage.getItem("dossierid")
+const baseURL = "https://env-292687.trial.cloud.microstrategy.com/MicroStrategyLibrary"
+
 // Function to update filters will be called in runCode() after dossier is created and onclick from Update Filters by default.
 async function updateFilters() {
     let filterList = await dossier.getFilterList();
@@ -19,8 +20,6 @@ async function updateFilters() {
                 const filterKey = filter.filterKey;
 
                 if (filter.filterDetail.supportMultiple === true) {
-                    // filterListRow += `<div class="filterListRow"><div class="filterRowHeader"><div class="filterName">${filter.filterName}</div><div class="rowFilterControl"><a href="#" class="filterControlLink" onclick="selectAllAttributeValues('filter${filterKey}',true)" >Select All</a><a href="#" class="filterControlLink" onclick="selectAllAttributeValues('filter${filterKey}', false)" >Clear All</a></div></div>${filterValueElement}</div>`;
-
                     filterListRow += `<div class="filterListRow"><div class="filterRowHeader"><div class="filterName">${filter.filterName}</div><div class="rowFilterControl"><a href="#" class="filterControlLink" onclick="selectAllAttributeValues('filter${filterKey}',true)" ><i class="fa-solid fa-check fa-2x"></i></a><a href="#" class="clearfilterControlLink" onclick="selectAllAttributeValues('filter${filterKey}', false)" ><i class="fa fa-remove fa-2x"></i></a></div></div>${filterValueElement}</div>`;
 
                 } else {
@@ -30,10 +29,23 @@ async function updateFilters() {
         }
         filterListContainer.html(filterListRow);
         for (filter of filterList) {
-            $('#filter' + filter.filterKey).chosen({
-                disable_search_threshold: 0,
-                no_results_text: "Oops, nothing found!",
-                width: "100%"
+            // $('#filter' + filter.filterKey).chosen({
+            //     disable_search_threshold: 0,
+            //     no_results_text: "Oops, nothing found!",
+            //     width: "100%"
+            // });
+            $('#filter' + filter.filterKey).chosen().change(function() {
+                // var totalSelected = $(this).find('option:selected').size();
+                // let filtertotalSelected = $("#filterW249 :selected").length;
+                let filtertotalSelected = $("#filter" + filter.filterKey + " :selected").length;
+                console.log(filtertotalSelected);
+                let filterplaceholder = $(this).find('option:first-child').text();
+                console.log(filterplaceholder);
+                if (filtertotalSelected > 2) {
+                    // $(this).next().find('.chosen-choices').find('li.search-choice').hide(),
+                    $(this).next().find('.chosen-choices').find('li.search-choice').hide(),
+                        $(this).next().find('.chosen-choices').append('<li class="search-choice" <span>' + filtertotalSelected + ' values selected. </li>');
+                }
             });
 
         }
@@ -136,9 +148,6 @@ function applyFilter(type) {
 function selectAllAttributeValues(filterKey, checked) {
     filterKey = "#" + filterKey;
     if (checked) {
-        // $(filterKey + ' option').attr('selected', true);
-        // $(filterKey).trigger('chosen:updated');
-
         $(filterKey + ' option').prop('selected', true);
         $(filterKey).trigger('chosen:updated');
 
@@ -242,7 +251,7 @@ async function runCode(url) {
         navigationBar: {
             enabled: true,
             gotoLibrary: true,
-            title: true,
+            title: false,
             toc: true,
             reset: true,
             reprompt: true,
@@ -252,8 +261,15 @@ async function runCode(url) {
             filter: true,
             options: true,
             search: true,
-            bookmark: true
+            bookmark: false
         },
+
+        filterFeature: {
+            enabled: true,
+            edit: true,
+            summary: false,
+        },
+
         enableResponsive: true,
     };
     // INSERT PROPERTIES BELOW HERE
@@ -279,10 +295,6 @@ async function runCode(url) {
     }
 
 
-    // const container = document.getElementById("embedding-dossier-container");
-    // const marginBottom = 5;
-    // container.style.minHeight = "calc(100vh - " + (container.offsetTop + marginBottom) + "px)";
-
     responsiveHeight()
 
 
@@ -302,7 +314,6 @@ async function runCode(url) {
     function eventPageSwitchedFunction(e) {
         /* Add any functionality for event needed here */
         updateWidgetList();
-        // getPanels();
     }
 
     // Update filters when page switches
@@ -325,7 +336,6 @@ async function runCode(url) {
 
     /* On Filter Updated Event Start*/
     function eventFilterUpdatedFunction(e) {
-        //  console.log(e);
         // Add any functionality for event needed here
         console.log("Filter Updated Event");
         updateFilters();
@@ -338,9 +348,16 @@ async function runCode(url) {
     getPanels();
     populateProjects();
 
+    document.querySelector("#masterstudyFilter").innerHTML = "";
+    masterstudyFilter();
+
     // Get all pages
     var toc = dossier.getTableContent();
     var listOfChapters = dossier.getChapterList();
+
+    // Reset Page Panel 
+    document.querySelector(".button-holder").innerHTML = ""
+
     for (let i = 0; i < listOfChapters.length; i++) {
         for (let j = 0; j < listOfChapters[i].children.length; j++) {
             node = "dossier.navigateToPage(dossier.getPageByNodeKey(" + `'` + listOfChapters[i].children[j].nodeKey + `'` + "))"
@@ -353,11 +370,29 @@ async function runCode(url) {
 function dosparam() {
     let url = "https://env-292687.trial.cloud.microstrategy.com/MicroStrategyLibrary/app" + "/" + sessionStorage.getItem("projid") + "/" + sessionStorage.getItem("dossierid");
     runCode(url);
+    $("#masterstudyFilter").chosen().change(function() {
+        let msftotalSelected = $("#masterstudyFilter :selected").length;
+        let showmoreSelected = msftotalSelected - 2;
+        if (msftotalSelected > 2) {
+            // $(this).next().find('.chosen-choices').find('li.search-choice li:gt(1)').hide(),
+            // $("#masterstudyFilter_chosen li:gt(1)").hide(),
+            $("#masterstudyFilter_chosen li").not(':eq(0), :eq(1)').hide();
+            $(this).next().find('.chosen-choices').append('<li class="search-choice" <span> + ' + showmoreSelected + ' selected. </li>');
+
+        }
+
+
+        // if (msftotalSelected < 2) {
+        //     $("#masterstudyFilter_chosen li").show();
+        //     console.log("========");
+        // }
+
+        // $("#masterstudyFilter_chosen li:gt(1)").hide();
+    });
 }
 
 
 function authoring() {
-    updateRequiredFunction();
     delete config["instance"];
     delete config["filters"];
     delete config["visualizationAppearances"];
@@ -395,13 +430,6 @@ function authoring() {
             layers: true,
         },
     };
-
-
-    dossier
-        .switchToMode("authoring")
-        .then((e) => console.log(e))
-        .catch((error) => console.error(error));
-
     dossier = window.microstrategy.dossier.create(config);
 
 }
@@ -410,6 +438,7 @@ function getPanels() {
 
     dossier.getCurrentPagePanelStacks().then((currentPagePanelStacks) => {
         let row = "";
+        $("#panellist").chosen();
         for (let i = 0; i < currentPagePanelStacks.length; i++) {
             for (let j = 0; j < currentPagePanelStacks[i].panels.length; j++) {
                 row += `<option value="${currentPagePanelStacks[i].panels[j].key}" id = "${currentPagePanelStacks[i].panels[j].key}" class="${currentPagePanelStacks[i].panels[j].name}">${currentPagePanelStacks[i].panels[j].name}</option>`;
@@ -417,6 +446,8 @@ function getPanels() {
         }
         console.log(row);
         document.querySelector(".panel").innerHTML = row;
+        $('#panellist').trigger("chosen:updated");
+
         if (row.length > 0) {
             console.log("Wow, panel found!");
             $(".panel").show();
@@ -433,20 +464,15 @@ function selectChanged(tag) {
     dossier.switchPanel(document.getElementById("panellist").value).then((switchPanel) => {
         console.log("Panel switched to ", switchPanel);
         updateWidgetList();
-        $("#panelListDropdown").hide();
-        // $("#panellist").hide();
+        $("#panellist_chosen").hide();
     })
-
-    // dossier.switchPanel(document.querySelector('option:checked').value).then((switchPanel) => {
-    //     console.log("Panel switched to ", switchPanel);
-    // })
 }
 
 
 
 function responsiveHeight() {
     const container = document.getElementById("embedding-dossier-container");
-    const marginBottom = 15;
+    const marginBottom = 14;
     container.style.minHeight = "calc(100vh - " + (container.offsetTop + marginBottom) + "px)";
     console.log("Container Top  Offset - ", container.offsetTop)
 }
@@ -468,23 +494,32 @@ function resizeWidget(size) {
                 size: size,
             })
             .then((visualization) => { console.log("Following Widget Resized:", visualization); }).catch((error) => { console.error(error); });
+
+        document.querySelector(".dropdown-content").style.display = "none";
+        console.log(size);
+        if (size === "maximized") {
+            console.log(size);
+            document.querySelector(".dropdown-content").style.display = "none";
+        }
     }
 }
 
 
 
 function updateWidgetList() {
-    // getPanels();
     if (dossier) {
         dossier.getCurrentPageVisualizationList().then((visualizations) => {
+
             console.log("Widget List : ", visualizations);
             let row = "";
 
             for (viz of visualizations) {
-                console.log(viz.key, viz.name)
+                $("#vizList").chosen();
                 row += `<option value="${viz.key}" id = "${viz.key}" class="${viz.name}">${viz.name}</option>`;
             }
             document.querySelector(".vizList").innerHTML = row;
+
+            $('#vizList').trigger("chosen:updated");
         });
     }
     updateFilters();
@@ -660,27 +695,172 @@ async function populateProjects() {
 
         let row = "";
         for (project of projectList.projects) {
-            console.log(project.name, project.id)
+            $("#projectList").chosen();
             row += `<option value="${project.id}" id = "${project.id}">${project.name}</option>`;
         }
 
         document.querySelector(".projectList").innerHTML = row;
+
+        $('#projectList').trigger("chosen:updated");
     })
 }
 
 
 async function createDossier(project) {
-    $("#projectListDropdown").hide();
+
     let projectID = document.querySelector(".projectList").value
     const baseURL = "https://env-292687.trial.cloud.microstrategy.com/MicroStrategyLibrary"
     const token = await getAuthToken(baseURL)
     searchDossier(projectID, token).then((dossierTemplate) => {
+
         let dossierID = dossierTemplate.result[0].id
         console.log("Dossier ID ", dossierID)
         console.log("Project ID ", projectID)
         let url = baseURL + "/app" + "/" + projectID + "/" + dossierID;
         runCode(url);
         authoring();
+        $("#projectList_chosen").hide();
 
     })
+}
+
+
+async function saveStory() {
+    let bookmarkName = document.querySelector(".bookmark-name").value;
+
+    const token = await getAuthToken(baseURL)
+
+    console.log("Saving Filter Story...")
+
+    let dossierInstanceID = await createDossierInstance(token, baseURL, projectID, dossierID).then((dossierInstanceID) => dossierInstanceID)
+    dossierInstanceID = dossierInstanceID.mid
+    console.log("New Dossier Instance - ", dossierInstanceID)
+
+    let instanceDetails = await dossierInstanceInfo(token, baseURL, projectID, dossierID, dossierInstanceID).then((instanceDetails) => instanceDetails)
+    console.log("Instance Details with Shortcut - ", instanceDetails)
+
+    let shortcutID = instanceDetails.shortcut.id
+    console.log("Shortcut ID -", shortcutID)
+
+    let bookmarkID = await createBookmark(token, baseURL, projectID, dossierInstanceID, bookmarkName).then((bookmark) => bookmark.id)
+    console.log("New Bookmark with ID ", bookmarkID, " created")
+
+    let bookmarks = await getBookmarks(token, baseURL, projectID, shortcutID).then((bookmarks) => bookmarks)
+    console.log("All Dossier Bookmarks - ", bookmarks)
+
+    let bookmarkURL = baseURL + "/app/" + projectID + "/" + dossierID + "/" + "bookmarks?ids=" + bookmarkID
+    console.log("Bookmark URL ", bookmarkURL)
+
+    sessionStorage.setItem("shortcutID", shortcutID);
+    sessionStorage.setItem("bookmarkid", bookmarkID);
+    sessionStorage.setItem("bookmarkURL", bookmarkURL);
+
+    console.log("Filter Story saved succcessfully!!!")
+
+    $(".dropdown-content-create-bm").hide();
+    listUserStories();
+
+}
+
+
+async function deleteFilterStory(ele) {
+
+    let bookmarkID = ele.getAttribute("bookmarkID")
+    let shortcutID = ele.getAttribute("shortcutID")
+
+    const token = await getAuthToken(baseURL)
+
+    let status = await deleteBookmarkApi(token, baseURL, projectID, shortcutID, bookmarkID).then((response) => response)
+
+    console.log("Bookmark with name & id deleted", status)
+
+}
+
+
+async function listUserStories() {
+
+    const token = await getAuthToken(baseURL)
+
+    let dossierInstanceID = await createDossierInstance(token, baseURL, projectID, dossierID).then((dossierInstanceID) => dossierInstanceID)
+    dossierInstanceID = dossierInstanceID.mid
+
+    let instanceDetails = await dossierInstanceInfo(token, baseURL, projectID, dossierID, dossierInstanceID).then((instanceDetails) => instanceDetails)
+
+    let shortcutID = instanceDetails.shortcut.id
+
+    let filterStories = await getBookmarks(token, baseURL, projectID, shortcutID).then((bookmarks) => bookmarks)
+
+    console.log("User Filter Story List ", filterStories)
+
+    document.querySelector(".filterStoryList").innerHTML = "";
+
+    let row = "";
+    for (let i in filterStories) {
+        let bookmarkURL = baseURL + "/app/" + projectID + "/" + dossierID + "/" + "bookmarks?ids=" + filterStories[i].id
+        row += `<ul class="bookmarkList"><button class="bookmarkButton" url ="${bookmarkURL}" onclick = "embedBookmark(this)">${filterStories[i].name}</button><button class="shareBookmark-Icon"><i class='fas fa-share' style='font-size:24px; font-size: 9px'></i></button><button class="editBookmark-Icon" bookmarkID = "${filterStories[i].id}" shortcutID = "${shortcutID}"><i class='fas fa-pen' style='font-size:24px; font-size: 9px'></i></button><button class="deleteBookmark-Icon" bookmarkID = "${filterStories[i].id}" shortcutID = "${shortcutID}" onclick = "deleteFilterStory(this)"><i class='far fa-trash-alt' style='font-size:24px; font-size: 9px'></i></button></ul>`
+    }
+
+    $(".filterStoryList").append(row)
+}
+
+
+function embedBookmark(ele) {
+    $(".dropdown-content-bm").hide();
+    let url = ele.getAttribute("url")
+    runCode(url);
+}
+
+function masterstudyFilter() {
+    let dossierFilters = dossier.getFilterList();
+    var studyfilterKey = "";
+    var studyfiltervalueList = "";
+    $("#masterstudyFilter").chosen();
+    dossierFilters.then((filters) => {
+
+        for (let i = 0; i < filters.length; i++) {
+            if (filters[i].filterName === "studyname" || filters[i].filterName === "StudyName" || filters[i].filterName === "Study Name" || filters[i].filterName === "Studyname") {
+
+                studyfilterKey = filters[i].filterKey;
+                for (let j = 0; j < filters[i].filterDetail.items.length; j++) {
+                    let filterValues = filters[i].filterDetail.items[j];
+                    let valueName = filters[i].filterDetail.items[j].name
+                    let valueId = filters[i].filterDetail.items[j].value
+
+                    studyfiltervalueList += '<option class="filterValues" value="' + valueId + '" studyfilterKey="' + studyfilterKey + '" />' + valueName + '</option>';
+                }
+            }
+        }
+        $("#masterstudyFilter").append(studyfiltervalueList);
+
+        $('#masterstudyFilter').trigger("chosen:updated");
+    })
+
+}
+
+function applyMSF() {
+    const studyfilterKey = document.querySelector(".filterValues").getAttribute("studyfilterkey");
+    console.log(studyfilterKey);
+    var selected = [];
+    for (var option of document.getElementById('masterstudyFilter').options) {
+        if (option.selected) {
+            selected.push(option.value);
+        }
+    }
+    console.log(selected);
+
+    let selections = [];
+    for (val of selected) {
+        selections.push({ value: val });
+    }
+    if (selected.length >= 0) {
+        let filterJson = {
+            filterInfo: {
+                key: studyfilterKey
+            },
+            selections: selections,
+            holdSubmit: true
+        }
+        dossier.filterSelectMultiAttributes(filterJson);
+    }
+    dossier.filterApplyAll();
 }

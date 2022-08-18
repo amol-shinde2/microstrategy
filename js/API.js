@@ -223,6 +223,26 @@ async function getUsersMSTR(token, baseURL) {
 
 }
 
+async function userLogout(token, baseURL) {
+    var options = {
+        method: 'POST',
+        redirect: 'follow',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-MSTR-AuthToken': sessionStorage.getItem('token'),
+        }
+    }
+    fetch("https://env-292687.trial.cloud.microstrategy.com/MicroStrategyLibrary/api/auth/logout", options)
+        .then(response => response.text())
+        .then(result => console.log(result))
+        .catch(error => console.log('error', error));
+    sessionStorage.clear();
+    location.href = "login.html";
+
+}
+
+
 async function searchDossier(projectID, token) {
     const baseURL = "https://env-292687.trial.cloud.microstrategy.com/MicroStrategyLibrary"
 
@@ -246,4 +266,269 @@ async function searchDossier(projectID, token) {
             }
         })
 
+}
+
+async function createDossierInstance(token, baseURL, projectID, dossierID) {
+
+    var raw = JSON.stringify({
+        "filters": null,
+        "persistViewState": true,
+        "resolveOnly": false
+    });
+
+
+    var options = {
+        method: 'POST',
+        credentials: 'include',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-MSTR-AuthToken': token,
+            'X-MSTR-ProjectID': projectID
+        },
+        body: raw
+    }
+
+
+    return fetch(baseURL + "/api/dossiers/" + dossierID + "/instances", options)
+        .then(function(response) {
+            if (response.ok) {
+                return response.json()
+            } else {
+                throw (new Error("Fetching Dossier List Error"));
+            }
+        })
+
+}
+
+
+async function dossierInstanceInfo(token, baseURL, projectID, dossierID, dossierInstanceID) {
+
+    var options = {
+        method: 'GET',
+        credentials: 'include',
+        mode: 'cors',
+        redirect: 'follow',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-MSTR-AuthToken': token,
+            'X-MSTR-ProjectID': projectID
+        }
+    }
+
+    return fetch(baseURL + "/api/dossiers/" + dossierID + "/instances/" + dossierInstanceID + "?includeTOC=true&includeShortcutInfo=true&resultFlag=3&checkPrompted=true", options)
+        .then(function(response) {
+            if (response.ok) {
+                return response.json()
+            } else {
+                throw (new Error("Fetching Dossier List Error"));
+            }
+        })
+}
+
+
+
+async function getBookmarks(token, baseURL, projectID, shortcutID) {
+
+    var options = {
+        method: 'GET',
+        credentials: 'include',
+        mode: 'cors',
+        redirect: 'follow',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-MSTR-AuthToken': token,
+            'X-MSTR-ProjectID': projectID
+        }
+    }
+
+    return fetch(baseURL + "/api/shortcuts/" + shortcutID + "/bookmarks", options)
+        .then(function(response) {
+            if (response.ok) {
+                return response.json()
+            } else {
+                throw (new Error("Fetching Dossier List Error"));
+            }
+        })
+}
+
+
+async function createBookmark(token, baseURL, projectID, dossierInstanceID, bookmarkName) {
+
+    var raw = JSON.stringify({
+        "name": bookmarkName,
+        "instanceId": dossierInstanceID
+    });
+
+
+    var options = {
+        method: 'POST',
+        credentials: 'include',
+        mode: 'cors',
+        redirect: 'follow',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-MSTR-AuthToken': token,
+            'X-MSTR-ProjectID': projectID
+        },
+        body: raw
+    }
+
+    return fetch(baseURL + "/api/bookmarks", options)
+        .then(function(response) {
+            if (response.ok) {
+                return response.json()
+            } else {
+                throw (new Error("Fetching Dossier List Error"));
+            }
+        })
+}
+
+
+
+
+async function deleteBookmarkApi(token, baseURL, projectID, shortcutID, bookmarkID) {
+
+    var raw = JSON.stringify({
+        "shortcutId": shortcutID
+    });
+
+    var options = {
+        method: 'DELETE',
+        credentials: 'include',
+        mode: 'cors',
+        redirect: 'follow',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-MSTR-AuthToken': token,
+            'X-MSTR-ProjectID': projectID
+        },
+        body: raw
+    }
+
+
+    return fetch(baseURL + "/api/bookmarks/" + bookmarkID, options)
+        .then(function(response) {
+            if (response.ok) {
+                return response
+            } else {
+                throw (new Error("Fetching Dossier List Error"));
+            }
+        })
+
+}
+
+
+async function getFavoritesAPI(token) {
+    var options = {
+        method: 'GET',
+        credentials: 'include',
+        mode: 'cors',
+        redirect: 'follow',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-MSTR-AuthToken': token,
+        }
+    }
+
+    return fetch(baseURL + "/api/library/shortcutGroups", options)
+        .then(function(response) {
+            if (response.ok) {
+                return response.json()
+            } else {
+                throw (new Error("Fetching Dossier List Error"));
+            }
+        })
+}
+
+
+async function addFavoriteAPI(token, dossierID, projectID) {
+    var raw = JSON.stringify({
+        "operationList": [{
+            "op": "addElements",
+            "path": "/itemKeys",
+            "value": [
+                dossierID + "_" + projectID
+            ]
+        }]
+    });
+
+    var options = {
+        method: 'PATCH',
+        credentials: 'include',
+        mode: 'cors',
+        redirect: 'follow',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-MSTR-AuthToken': token,
+        },
+        body: raw
+    }
+
+    fetch("https://env-292687.trial.cloud.microstrategy.com/MicroStrategyLibrary/api/library/shortcutGroups/favorites", options)
+        .then(function(response) {
+            if (response.ok) {
+                console.log("Dossier Added to Homepage successfully!!!")
+                location.reload(true);
+            } else {
+                throw (new Error("Fetching Dossier List Error"));
+            }
+        })
+}
+
+
+async function removeFavoriteAPI(token, dossierID, projectID) {
+    var raw = JSON.stringify({
+        "operationList": [{
+            "op": "removeElements",
+            "path": "/itemKeys",
+            "value": [
+                dossierID + "_" + projectID
+            ]
+        }]
+    });
+
+    var options = {
+        method: 'PATCH',
+        credentials: 'include',
+        mode: 'cors',
+        redirect: 'follow',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-MSTR-AuthToken': token,
+        },
+        body: raw
+    }
+
+    fetch("https://env-292687.trial.cloud.microstrategy.com/MicroStrategyLibrary/api/library/shortcutGroups/favorites", options)
+        .then(function(response) {
+            if (response.ok) {
+                console.log("Dossier removed from Homepage successfully!!!")
+                location.reload(true);
+            } else {
+                throw (new Error("Fetching Dossier List Error"));
+            }
+        })
+}
+
+
+async function getContentGroupsChildUpdated(baseURL, token, groupid, projects) {
+    var options = {
+        method: 'GET',
+        credentials: 'include',
+        mode: 'cors',
+        headers: {
+            'Content-Type': 'application/json',
+            'x-mstr-authtoken': token
+        }
+    }
+
+    return fetch(baseURL + '/api/contentGroups/' + groupid + '/contents?projectId=' + projects, options)
+        .then(function(response) {
+            if (response.ok) {
+                return response.json()
+            } else {
+                throw (new Error("Get Library Error"));
+            }
+        })
 }
