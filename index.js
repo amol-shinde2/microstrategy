@@ -29,25 +29,11 @@ async function updateFilters() {
         }
         filterListContainer.html(filterListRow);
         for (filter of filterList) {
-            // $('#filter' + filter.filterKey).chosen({
-            //     disable_search_threshold: 0,
-            //     no_results_text: "Oops, nothing found!",
-            //     width: "100%"
-            // });
-            $('#filter' + filter.filterKey).chosen().change(function() {
-                // var totalSelected = $(this).find('option:selected').size();
-                // let filtertotalSelected = $("#filterW249 :selected").length;
-                let filtertotalSelected = $("#filter" + filter.filterKey + " :selected").length;
-                console.log(filtertotalSelected);
-                let filterplaceholder = $(this).find('option:first-child').text();
-                console.log(filterplaceholder);
-                if (filtertotalSelected > 2) {
-                    // $(this).next().find('.chosen-choices').find('li.search-choice').hide(),
-                    $(this).next().find('.chosen-choices').find('li.search-choice').hide(),
-                        $(this).next().find('.chosen-choices').append('<li class="search-choice" <span>' + filtertotalSelected + ' values selected. </li>');
-                }
+            $('#filter' + filter.filterKey).chosen({
+                disable_search_threshold: 0,
+                no_results_text: "Oops, nothing found!",
+                width: "100%"
             });
-
         }
         for (filter of filterList) {
             const filterName = filter.filterName;
@@ -170,7 +156,6 @@ function selectAllAndSubmit() {
         });
         selectAllAttributeValues("filter" + key, true);
     }
-    // dossier.filterApplyAll();
 }
 
 // Function to deselect all attributes and submit for the filter
@@ -186,7 +171,6 @@ function deselectAllAndSubmit() {
         });
         selectAllAttributeValues("filter" + key, false);
     }
-    // dossier.filterApplyAll();
 }
 
 
@@ -220,7 +204,6 @@ $(".filterswitchvertically").on("click", function() {
     $(".filterContainer").removeClass("filterContainer").addClass("filterContainerhrz");
     $(".filterHeader").removeClass(".filterHeader").addClass(".filterHeaderhrz");
     $(".filterListContainer").removeClass("filterListContainer").addClass("filterListContainerhrz");
-    // $("#embedding-dossier-container").removeClass("embedding-dossier-container").addClass("embedding-dossier-containerhrz");
     $(".filterControlList").removeClass("filterControlList").addClass("filterControlListhrz");
     $("#embedding-dossier-container").toggleClass("hrz");
     $(".filterControlList ").toggleClass("hrz");
@@ -234,14 +217,27 @@ $(".filterswitchhorizontally").on("click", function() {
     $(".filterContainerhrz").removeClass("filterContainerhrz").addClass("filterContainer");
     $(".filterHeaderhrz").removeClass(".filterHeaderhrz").addClass(".filterHeader");
     $(".filterListContainerhrz").removeClass("filterListContainerhrz").addClass("filterListContainer");
-    // $("#embedding-dossier-containerhrz").removeClass("embedding-dossier-containerhrz").addClass("embedding-dossier-container");
     $(".filterControlListhrz").removeClass("filterControlListhrz").addClass("filterControlList");
     $("#embedding-dossier-container").toggleClass("hrz");
     $(".filterControlList ").toggleClass("hrz");
 });
 
+// url = "https://env-292687.trial.cloud.microstrategy.com/MicroStrategyLibrary/app" + "/" + sessionStorage.getItem("projid") + "/" + sessionStorage.getItem("dossierid");
+
+graphicaltabular = true;
+
+function edit() {
+    flag = 'authoring';
+    url = "https://env-292687.trial.cloud.microstrategy.com/MicroStrategyLibrary/app" + "/" + sessionStorage.getItem("projid") + "/" + sessionStorage.getItem("dossierid");
+    runCode(url, flag, graphicaltabular);
+
+}
+
 // Function to render the dossier
-async function runCode(url) {
+async function runCode(url, flag, graphicaltabular) {
+    console.log(url);
+    console.log(flag);
+    console.log(graphicaltabular);
     // For more details on configuration properties, see https://www2.microstrategy.com/producthelp/Current/EmbeddingSDK/Content/topics/dossier_properties.htm
     config = {
         url: url,
@@ -261,7 +257,8 @@ async function runCode(url) {
             filter: true,
             options: true,
             search: true,
-            bookmark: false
+            bookmark: true,
+            // edit: true
         },
 
         filterFeature: {
@@ -272,9 +269,50 @@ async function runCode(url) {
 
         enableResponsive: true,
     };
-    // INSERT PROPERTIES BELOW HERE
 
-    // INSERT PROPERTIES ABOVE HERE
+    if (flag === "authoring") {
+        delete config["instance"];
+        delete config["filters"];
+        delete config["visualizationAppearances"];
+        delete config["visualizationSelectedElements"];
+
+        config.dossierRenderingMode = "authoring";
+
+        config.authoring = {
+            menubar: {
+                library: {
+                    visible: true,
+                },
+            },
+
+            toolbar: {
+
+                addData: { visible: false },
+                addChapter: { visible: false },
+                addPage: { visible: false },
+                pauseDataRetrieval: { visible: false },
+                insertVisualization: { visible: graphicaltabular },
+                // insertVisualization: { visible: true },
+                insertFilter: { visible: false },
+                tableOfContents: { visible: false },
+
+            },
+
+            panelVisibility: {
+                contents: true,
+                datasets: false,
+                editor: true,
+                filter: true,
+                format: true,
+                layers: true,
+            },
+        };
+
+
+        document.querySelector(".button-holder").innerHTML = "";
+        document.querySelector(".filterListContainer").innerHTML = "";
+        $(".dropdown-menu-right").hide();
+    }
 
     // Embed the dossier with the configuration settings
     try {
@@ -301,19 +339,18 @@ async function runCode(url) {
     // INSERT METHODS BELOW HERE
     updateFilters();
 
-    function eventPageSwitchedFunction(e) {
-        /* Add any functionality for event needed here */
-        updateFilters();
-        getPanels();
-
-    }
-
-
     updateWidgetList();
+    $("#filterContainer").show();
 
     function eventPageSwitchedFunction(e) {
         /* Add any functionality for event needed here */
+        console.log("event Page Switched Function");
+        updateFilters();
+        // getPanels();
         updateWidgetList();
+        document.querySelector("#masterstudyFilter").innerHTML = "";
+        masterstudyFilter();
+        $("#filterContainer").show();
     }
 
     // Update filters when page switches
@@ -345,24 +382,67 @@ async function runCode(url) {
         eventFilterUpdatedFunction
     );
 
+
+
+
+    /* On Dossier Authoring Saved Event Start */
+    function eventDossierAuthoringSavedFunction(e) {
+        // Add any functionality for event needed here
+        runCode(url);
+        // updateFilters();
+        console.log("Dossier Authoring Saved Event");
+    }
+    dossier.registerEventHandler(
+        microstrategy.dossier.EventType.ON_DOSSIER_AUTHORING_SAVED,
+        eventDossierAuthoringSavedFunction
+    );
+
+    /* On Dossier Authoring Saved Event End */
+
+    /* On Dossier Authoring Closed Event Start */
+    function eventDossierAuthoringClosedFunction(e) {
+        // Add any functionality for event needed here
+        runCode(url);
+        masterstudyFilter();
+        console.log("Dossier Authoring Closed Event");
+    }
+    dossier.registerEventHandler(
+        microstrategy.dossier.EventType.ON_DOSSIER_AUTHORING_CLOSED,
+        eventDossierAuthoringClosedFunction
+    );
+
+    /* On Dossier Authoring Closed Event End */
+
+    function eventPageRenderFinishedFunction(e) {
+        // Add any functionality for event needed here
+        console.log("Page Render Finished Event-->");
+    }
+    dossier.registerEventHandler(
+        microstrategy.dossier.EventType.ON_PAGE_RENDER_FINISHED,
+        eventPageRenderFinishedFunction
+    );
+
+
     getPanels();
     populateProjects();
 
     document.querySelector("#masterstudyFilter").innerHTML = "";
     masterstudyFilter();
 
-    // Get all pages
-    var toc = dossier.getTableContent();
-    var listOfChapters = dossier.getChapterList();
+    if (flag != 'authoring') {
+        // Get all pages
+        var toc = dossier.getTableContent();
+        var listOfChapters = dossier.getChapterList();
 
-    // Reset Page Panel 
-    document.querySelector(".button-holder").innerHTML = ""
+        // Reset Page Panel 
+        document.querySelector(".button-holder").innerHTML = ""
 
-    for (let i = 0; i < listOfChapters.length; i++) {
-        for (let j = 0; j < listOfChapters[i].children.length; j++) {
-            node = "dossier.navigateToPage(dossier.getPageByNodeKey(" + `'` + listOfChapters[i].children[j].nodeKey + `'` + "))"
-            $('.button-holder').append(`<button class="basic-button btn-basic subtab" onclick="` + node + `">` + listOfChapters[i].children[j].name +
-                `</button>`);
+        for (let i = 0; i < listOfChapters.length; i++) {
+            for (let j = 0; j < listOfChapters[i].children.length; j++) {
+                node = "dossier.navigateToPage(dossier.getPageByNodeKey(" + `'` + listOfChapters[i].children[j].nodeKey + `'` + "))"
+                $('.button-holder').append(`<button class="basic-button btn-basic subtab" onclick="` + node + `">` + listOfChapters[i].children[j].name +
+                    `</button>`);
+            }
         }
     }
 }
@@ -376,63 +456,13 @@ function dosparam() {
         if (msftotalSelected > 2) {
             // $(this).next().find('.chosen-choices').find('li.search-choice li:gt(1)').hide(),
             // $("#masterstudyFilter_chosen li:gt(1)").hide(),
-            $("#masterstudyFilter_chosen li").not(':eq(0), :eq(1)').hide();
+            $("#masterstudyFilter_chosen ul li").not(':eq(0), :eq(1)').hide();
             $(this).next().find('.chosen-choices').append('<li class="search-choice" <span> + ' + showmoreSelected + ' selected. </li>');
 
         }
-
-
-        // if (msftotalSelected < 2) {
-        //     $("#masterstudyFilter_chosen li").show();
-        //     console.log("========");
-        // }
-
-        // $("#masterstudyFilter_chosen li:gt(1)").hide();
     });
 }
 
-
-function authoring() {
-    delete config["instance"];
-    delete config["filters"];
-    delete config["visualizationAppearances"];
-    delete config["visualizationSelectedElements"];
-
-    config.dossierRenderingMode = "authoring";
-
-    config.authoring = {
-        menubar: {
-            library: {
-                visible: true,
-            },
-        },
-
-
-        toolbar: {
-
-            addData: { visible: false },
-            addChapter: { visible: false },
-            addPage: { visible: false },
-            pauseDataRetrieval: { visible: false },
-            insertVisualization: { visible: false },
-            insertFilter: { visible: false },
-            tableOfContents: { visible: false },
-
-
-        },
-
-        panelVisibility: {
-            contents: true,
-            datasets: false,
-            editor: true,
-            filter: true,
-            format: true,
-            layers: true,
-        },
-    };
-    dossier = window.microstrategy.dossier.create(config);
-
-}
 
 function getPanels() {
 
@@ -694,20 +724,26 @@ async function populateProjects() {
     getProjects(baseURL, token).then((projectList) => {
 
         let row = "";
+        let row1 = "";
         for (project of projectList.projects) {
             $("#projectList").chosen();
+            $("#projectList1").chosen();
             row += `<option value="${project.id}" id = "${project.id}">${project.name}</option>`;
+            row1 += `<option value="${project.id}" id = "${project.id}">${project.name}</option>`;
         }
 
         document.querySelector(".projectList").innerHTML = row;
+        document.querySelector(".projectList1").innerHTML = row1;
 
         $('#projectList').trigger("chosen:updated");
+        $('#projectList1').trigger("chosen:updated");
     })
 }
 
 
-async function createDossier(project) {
-
+async function createDossier(project, graphicaltabular) {
+    const graphtab = graphicaltabular === "graph" ? true : false;
+    console.log(graphtab);
     let projectID = document.querySelector(".projectList").value
     const baseURL = "https://env-292687.trial.cloud.microstrategy.com/MicroStrategyLibrary"
     const token = await getAuthToken(baseURL)
@@ -716,9 +752,14 @@ async function createDossier(project) {
         let dossierID = dossierTemplate.result[0].id
         console.log("Dossier ID ", dossierID)
         console.log("Project ID ", projectID)
+
+        sessionStorage.setItem("dossierid", dossierID);
+        sessionStorage.setItem("projid", projectID);
+
         let url = baseURL + "/app" + "/" + projectID + "/" + dossierID;
-        runCode(url);
-        authoring();
+        flag = "authoring";
+        runCode(url, flag, graphtab);
+        // authoring(graphtab);
         $("#projectList_chosen").hide();
 
     })

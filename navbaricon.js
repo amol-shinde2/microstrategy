@@ -74,22 +74,6 @@ $(document).on("click ", function(event) {
     }
 });
 
-
-$(".projectListDropdown").click(function() {
-    $("#projectListDropdown").show();
-    $("#projectList_chosen").toggle();
-    $("#projectList_chosen").css("width", "200");
-    $("#projectList_chosen").css("display", "block");
-})
-
-$(document).on("click ", function(event) {
-    var $trigger = $(".projectListDropdown");
-    if ($trigger !== event.target && !$trigger.has(event.target).length) {
-        $("#projectList_chosen").hide();
-    }
-});
-
-
 $(".panelListDropdown").click(function() {
     $("#panellist").hide();
     $("#panelListDropdown").show();
@@ -108,3 +92,49 @@ $(document).on("click ", function(event) {
 $(".taskIcon").click(function() {
     $("#popupForm").toggle();
 })
+
+$(document).ready(function() {
+    // Show hide popover
+    $(".dossier-type").click(function() {
+        $(this).find(".dropdown-content-dossiertypeicon").show();
+    });
+});
+
+
+$(document).on("click", function(event) {
+    var $trigger = $(".dossier-type");
+    if ($trigger !== event.target && !$trigger.has(event.target).length) {
+        $(".dropdown-content-dossiertypeicon").slideUp("fast");
+        $("#projectList1_chosen").hide();
+        $("#projectList_chosen").hide();
+    }
+});
+
+
+$(".tabular").click(function() {
+    $("#projectList_chosen").show();
+    $("#projectList_chosen").css("display", "block");
+    // $(".dropdown-menu > li:hover > .submenu-gt").show();
+    $("#projectList_chosen").css("width", "200");
+
+    $("#projectList1_chosen").hide();
+
+})
+
+$(".graphical").click(function() {
+    $("#projectList1_chosen").show();
+    $("#projectList1_chosen").css("width", "200");
+    $("#projectList_chosen").hide();
+})
+
+
+$(".create-dossier-icon").click(function() {
+    $(".dropdown-menu-right").show();
+})
+
+$(document).on("click", function(event) {
+    var $trigger = $(".create-dossier-icon");
+    if ($trigger !== event.target && !$trigger.has(event.target).length) {
+        $(".dropdown-menu-right").hide();
+    }
+});

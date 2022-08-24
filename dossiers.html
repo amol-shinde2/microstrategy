@@ -1,7 +1,9 @@
 <html>
 
 <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="./chosen.min.css">
+    <link rel="stylesheet" href="./common.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="css/style.css">
@@ -9,7 +11,7 @@
     <script src="js/API.js"></script>
     <script src="https://env-292687.trial.cloud.microstrategy.com/MicroStrategyLibrary/javascript/embeddinglib.js"></script>
     <link rel="stylesheet" href="./dossier.css">
-    <link rel="stylesheet" href="./chosen.min.css">
+
     <style>
         ul.tab {
             list-style-type: none;
@@ -80,6 +82,8 @@
         </ul>
         <div class="navbar-text" id="usermessage"></div>
         <div class="" id="logoutButton" onclick=""></div>
+
+        <button class="homepage-filter-show-hide" onclick="hideshowFilters()" style="height: 40px; width:40px; border-radius: 50%;"><i class="fa fa-filter"></i></button>
     </nav>
 
 
@@ -119,8 +123,36 @@
             </table>
         </div>
     </div>
+
+
+
+    <div class="filter-dossier-container" style="display: flex; flex-direction:row">
+        <div id="filterContainer" class="filterContainer basic-container" style="display: none; flex-direction: column; justify-content: flex-start; width: auto; padding-left: 7px; margin-left: 5px; border: 1px solid gainsboro;" onload="runCode()">
+
+            <div class="filterSection">
+                <div class="filterListContainer example-container" style="display: block"></div>
+            </div>
+            <div class="filterControlSection">
+                <div class="filterControl" style="display: flex;">
+
+                    <button type="button" class="btn btn-primary" onclick="applyFilter(attributeSelector)">Apply</button>
+
+                    <div class="filterlinks" style="margin-top: -5px; margin-left: 10px">
+                        <a href="#" class="filterControlLinks" id="attributeSelectorValuesSelectAllAndSubmit" onclick="selectAllAndSubmit()"><i class="fa-solid fa-check fa-2x"></i></a>
+                        <a href="#" class="filterControlLinks" id="attributeSelectorValuesDeselectAllAndSubmit" onclick="deselectAllAndSubmit()"><i class="fa fa-remove fa-2x clearall-btn"></i></a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div id="embedding-dossier-container"></div>
+    </div>
+
+
     <script src="./chosen.jquery.min.js"></script>
-    <div id="embedding-dossier-container"></div>
+    <script src="./index.js"></script>
+
 </body>
 
 <script>
@@ -148,7 +180,9 @@
         document.querySelector(".dash-lib").classList.add("active");
         document.querySelector(".home-btn").classList.remove("active");
         $(".dashboard-tabs").show();
-        $("#embedding-dossier-container").show();
+        $(".filter-dossier-container").show();
+        $(".homepage-filter-show-hide").show();
+
     })
 
     $(".dash-lib").click(function() {
@@ -157,9 +191,14 @@
         document.querySelector(".home-btn").classList.add("active");
         document.querySelector(".dash-lib").classList.remove("active");
         $(".dashboard-tabs").hide();
-        $("#embedding-dossier-container").hide();
+        $(".filter-dossier-container").hide();
+        $(".homepage-filter-show-hide").hide();
 
     })
+
+    function hideshowFilters() {
+        $("#filterContainer").toggle();
+    }
 </script>
 
 </html>

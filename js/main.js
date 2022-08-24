@@ -1,10 +1,9 @@
-var baseURL = "https://env-292687.trial.cloud.microstrategy.com/MicroStrategyLibrary"
+// var baseURL = "https://env-292687.trial.cloud.microstrategy.com/MicroStrategyLibrary"
 var dossierID = ""
 var projectID = ""
-var dossier = ""
-
 
 function startLibrary() {
+    $("#libraryDropdown").chosen();
     const token = sessionStorage.getItem("token");
     const baseURL = sessionStorage.getItem("baseURL");
     getSession(baseURL, token)
@@ -45,7 +44,6 @@ function startLibrary() {
                     row.setAttribute("onmouseover", "style='background-color:#C0C0C0';");
                     row.setAttribute("onmouseout", "style='background-color:default';");
 
-                    $("#libraryDropdown").chosen();
                     const dashboardId = library[i].target.id
                     const projectId = library[i].projectId;
                     const dashboardName = library[i].name;
@@ -132,7 +130,7 @@ function dossierDetails(selectedDossier) {
 
 
 
-setTimeout(loadfirstDossier, 4000);
+setTimeout(loadfirstDossier, 5000);
 
 function loadfirstDossier() {
     $("ul.tab li:first-child a").click();
@@ -149,45 +147,7 @@ function openfavouriteDossier(dossierDetails) {
         $(this).addClass('activedash');
     });
 
-
-    async function favrunCode(favbaseURL) {
-        config = {
-            url: favbaseURL,
-            placeholder: document.getElementById("embedding-dossier-container"),
-            containerHeight: "700px",
-            containerWidth: "600px",
-            navigationBar: {
-                enabled: true,
-                gotoLibrary: true,
-                title: true,
-                toc: true,
-                reset: true,
-                reprompt: true,
-                share: true,
-                comment: true,
-                notification: true,
-                filter: true,
-                options: true,
-                search: true,
-                bookmark: false
-            },
-
-            filterFeature: {
-                enabled: true,
-                edit: true,
-                summary: false,
-            },
-
-            enableResponsive: true,
-        };
-
-        try {
-            dossier = await window.microstrategy.dossier.create(config);
-        } catch (error) {
-            console.error(error);
-        }
-    }
-    favrunCode(favbaseURL);
+    runCode(favbaseURL);
 }
 
 
