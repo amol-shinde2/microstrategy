@@ -171,12 +171,22 @@
 }
 
 .dropdown-content-usericon {
-    display: none;
+    /* display: none;
     position: absolute;
     background-color: #f1f1f1;
     overflow: auto;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1; */
+    display: none;
     z-index: 1;
+    background: #fff;
+    border: 0.1rem solid rgba(85, 96, 110, 0.4);
+    border-radius: 0.5rem;
+    /* margin-top: 1rem; */
+    overflow: auto;
+    position: absolute;
+    top: 100%;
+    right: 0px;
 }
 
 .dropdown-content-usericon a {
@@ -253,8 +263,15 @@
 }
 
 .username {
-    padding-bottom: 2px;
-    border-bottom: 2px solid darkblue;
+    /* padding-bottom: 2px;
+    border-bottom: 2px solid darkblue; */
+    border-bottom: 1px solid #ccc;
+    display: block;
+    line-height: 18px;
+    padding: 12px 0 11px 12px;
+    white-space: normal;
+    font-weight: bold;
+    color: #333333;
 }
 
 input[type="search"]::placeholder {
@@ -382,4 +399,82 @@ input[type="search"]::placeholder {
     margin-left: -17px;
     margin-right: -17px;
     margin-top: -5px;
+}
+
+#projectList_chosen {
+    width: 200px;
+    display: none;
+}
+
+#projectList1_chosen {
+    width: 200px;
+    display: none;
+}
+
+.dropdown-menu .dropdown-menu {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.dropdown-menu li {
+    position: relative;
+}
+
+.nav-item-gt .submenu-gt {
+    display: none;
+    position: absolute;
+    left: 100%;
+    top: -7px;
+}
+
+.nav-item-gt .submenu-left {
+    right: 100%;
+    left: auto;
+    border: none;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+
+/* .dropdown-menu>li:hover>.submenu-gt {
+    display: block;
+    border: none;
+    background-color: rgba(0, 0, 0, 0);
+} */
+
+.dropdown-menu>li:hover>#projectList_chosen {
+    display: none;
+    border: none;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.dropdown-menu>li:hover>#projectList1_chosen {
+    display: none;
+    border: none;
+    background-color: rgba(0, 0, 0, 0);
+}
+
+.userIcondropdownbtn {
+    margin-top: 2px;
+    padding-top: 0;
+    padding-bottom: 5px;
+    color: #333333;
+}
+
+.userprofiledropbtn {
+    padding-left: 6px;
+    min-height: 33px;
+    border: none;
+    background-color: rgba(0, 0, 0, 0);
+    text-align: left;
+    width: 200px;
+    margin-left: 5px;
+    font-weight: 600;
+}
+
+.userprofiledropbtn:hover {
+    background-color: #E0E0E0;
+}
+
+.extremeRight {
+    margin-top: 5px;
 }

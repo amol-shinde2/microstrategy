@@ -1,5 +1,5 @@
+// User Icon Menu
 $(document).ready(function() {
-    // Show hide popover
     $(".userDropdown").click(function() {
         $(this).find(".dropdown-content-usericon").slideToggle("fast");
     });
@@ -13,7 +13,11 @@ $(document).on("click", function(event) {
     }
 });
 
+// Current login username
+let currentLoggedUser = sessionStorage.getItem('username');
+$("#username").append(currentLoggedUser);
 
+// Export Icon Submenu Menu Items Whole Dossier, Current Page
 $('.dropdown-menu button.dropdown-toggle').on('click', function(e) {
     if (!$(this).next().hasClass('show')) {
         $(this).parents('.dropdown-menu').first().find('.show').removeClass('show');
@@ -25,21 +29,16 @@ $('.dropdown-menu button.dropdown-toggle').on('click', function(e) {
     $(this).parents('li.nav-item.dropdown.show').on('hidden.bs.dropdown', function(e) {
         $('.dropdown-submenu .show').removeClass('show');
     });
-
-
     return false;
 });
 
-let currentLoggedUser = sessionStorage.getItem('username');
-$("#username").append(currentLoggedUser);
-
-
+// Open Bookmark Menu Items
 function openbmtab() {
     $(".dropdown-content-bm").toggle();
     $(".dropdown-content-create-bm").hide();
 }
 
-
+// Close Bookmark Menu Items after clicking on outside of Bookmark Icon
 $(document).on("click ", function(event) {
     var $trigger = $(".bookmarkListDropdown");
     if ($trigger !== event.target && !$trigger.has(event.target).length) {
@@ -60,6 +59,7 @@ function hideshowfilters() {
     responsiveHeight();
 }
 
+// Maximize Visualization Item dropdown
 $(".maximizeIcon").click(function() {
     $("#maximizeIcon").show();
     $("#vizList_chosen").toggle();
@@ -74,6 +74,7 @@ $(document).on("click ", function(event) {
     }
 });
 
+// Panel List Item dropdown
 $(".panelListDropdown").click(function() {
     $("#panellist").hide();
     $("#panelListDropdown").show();
@@ -89,12 +90,12 @@ $(document).on("click ", function(event) {
     }
 });
 
+// Task Form show / hide
 $(".taskIcon").click(function() {
     $("#popupForm").toggle();
 })
 
 $(document).ready(function() {
-    // Show hide popover
     $(".dossier-type").click(function() {
         $(this).find(".dropdown-content-dossiertypeicon").show();
     });
@@ -114,15 +115,15 @@ $(document).on("click", function(event) {
 $(".tabular").click(function() {
     $("#projectList_chosen").show();
     $("#projectList_chosen").css("display", "block");
-    // $(".dropdown-menu > li:hover > .submenu-gt").show();
+    $(".dropdown-menu > li:hover > .submenu-gt , #projectList_chosen").show();
     $("#projectList_chosen").css("width", "200");
-
     $("#projectList1_chosen").hide();
 
 })
 
 $(".graphical").click(function() {
     $("#projectList1_chosen").show();
+    $(".dropdown-menu > li:hover > .submenu-gt , #projectList1_chosen").show();
     $("#projectList1_chosen").css("width", "200");
     $("#projectList_chosen").hide();
 })
@@ -138,3 +139,22 @@ $(document).on("click", function(event) {
         $(".dropdown-menu-right").hide();
     }
 });
+
+// Create Tabular / Graphical dossier dropdown start
+$(document).ready(function() {
+    $(document).on('click', '.dropdown-menu', function(e) {
+        e.stopPropagation();
+    });
+    if ($(window).width() < 992) {
+        $('.dropdown-menu a').click(function(e) {
+            e.preventDefault();
+            if ($(this).next('.submenu-gt').length) {
+                $(this).next('.submenu-gt').toggle();
+            }
+            $('.dropdown-gt').on('hide.bs.dropdown-gt', function() {
+                $(this).find('.submenu-gt').hide();
+            })
+        });
+    }
+});
+// Create Tabular / Graphical dossier dropdown End

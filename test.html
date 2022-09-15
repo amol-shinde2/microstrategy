@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <script type="text/javascript" src="https://env-292687.trial.cloud.microstrategy.com/MicroStrategyLibrary/javascript/embeddinglib.js"></script>
+</head>
+
+<body>
+    <button onclick="runCode('authoring')">Edit</button>
+    <div id="embedding-dossier-container" />
+    <script>
+        let url =
+            "https://env-292687.trial.cloud.microstrategy.com/MicroStrategyLibrary/app/4CF4046A814D574963C26EB7D2B55144/B1A322FC0E4184DA87B2E6AB386E6485/K53--K46"; // https://{env-url}/{libraryName}/app/{projectId}/{dossierId}
+        let dossier; // Variable to store the dossier created. Used by Event Handler do not remove!
+        let config; // Variable to store the configuration settings for dossier.
+        async function runCode(flag) {
+            // For more details on configuration properties, see https://www2.microstrategy.com/producthelp/Current/EmbeddingSDK/Content/topics/dossier_properties.htm
+            config = {
+                url: url,
+                placeholder: document.getElementById("embedding-dossier-container"),
+                containerHeight: "600px",
+                containerWidth: "800px",
+                customAuthenticationType: microstrategy.dossier.CustomAuthenticationType.AUTH_TOKEN,
+                disableNotification: true,
+                dockedComment: {
+                    dockedPosition: "left",
+                    canClose: true,
+                    dockChangeable: false,
+                    isDocked: false,
+                },
+                dockedFilter: {
+                    dockedPosition: "left",
+                    canClose: true,
+                    dockChangeable: false,
+                    isDocked: false,
+                },
+                dockedTOC: {
+                    dockedPosition: "left",
+                    theme: "light",
+                    canClose: true,
+                    dockChangeable: false,
+                    isDocked: false,
+                },
+                dossierFeature: {
+                    readonly: false,
+                },
+                enableCollaboration: true,
+                enableCustomAuthentication: false,
+                enableResponsive: true,
+                filterFeature: {
+                    enabled: true,
+                    edit: true,
+                    summary: true,
+                },
+                filters: [],
+                getLoginToken: function login() {
+                    console.log("Implement log in to return promise of auth token");
+                },
+                navigationBar: {
+                    enabled: true,
+                    gotoLibrary: true,
+                    title: true,
+                    toc: true,
+                    reset: true,
+                    reprompt: true,
+                    share: true,
+                    comment: true,
+                    notification: true,
+                    filter: true,
+                    options: true,
+                    search: true,
+                    bookmark: true,
+                    edit: false,
+                },
+                optionsFeature: {
+                    enabled: true,
+                    help: false,
+                    logout: true,
+                    manage: false,
+                    showTutorials: false,
+                },
+                shareFeature: {
+                    enabled: true,
+                    invite: false,
+                    link: true,
+                    email: false,
+                    export: true,
+                    download: false,
+                    shareDossier: false,
+                    subscribe: false,
+                },
+                smartBanner: false,
+                tocFeature: {
+                    enabled: true,
+                },
+                uiMessage: {
+                    enabled: true,
+                    addToLibrary: false,
+                },
+                visibleTutorials: {
+                    library: true,
+                    welcome: false,
+                    dossier: true,
+                    notification: false,
+                },
+                visualizationAppearances: [],
+            };
+
+            if (flag === "authoring") {
+                // INSERT PROPERTIES BELOW HERE
+
+                /* Enable Authoring Mode Configuration Start */
+                // The following config properties must be removed to allow dossier authoring
+                delete config["instance"];
+                delete config["filters"];
+                delete config["visualizationAppearances"];
+                delete config["visualizationSelectedElements"];
+
+                // Set to authoring mode
+                config.dossierRenderingMode = "authoring"; // Can be "authoring" or "consumption"
+                config.navigationBar.edit = true; // Show the edit icon in navigation bar
+                /* Enable Authoring Mode Configuration End */
+
+                // INSERT PROPERTIES ABOVE HERE
+            }
+
+
+            // Embed the dossier with the configuration settings
+            try {
+                dossier = await window.microstrategy.dossier.create(config);
+            } catch (error) {
+                console.error(error);
+            }
+
+            // INSERT METHODS BELOW HERE
+
+            /* On Dossier Authoring Closed Event Start */
+            function eventDossierAuthoringClosedFunction(e) {
+                // Add any functionality for event needed here
+                console.log("Dossier Authoring Closed Event TRIGGREDDDDDDDDDDDDDDD");
+            }
+            dossier.registerEventHandler(
+                microstrategy.dossier.EventType.ON_DOSSIER_AUTHORING_CLOSED,
+                eventDossierAuthoringClosedFunction
+            );
+
+            // To remove the event handler, use the code in comment below
+            // dossier.removeEventhandler(microstrategy.dossier.EventType.ON_DOSSIER_AUTHORING_CLOSED, eventDossierAuthoringClosedFunction);
+            /* On Dossier Authoring Closed Event End */
+
+            // INSERT METHODS ABOVE HERE
+        }
+        runCode();
+
+        async function authering() {
+            runCode();
+            /* Enable Authoring Mode Configuration Start */
+            // The following config properties must be removed to allow dossier authoring
+            delete config["instance"];
+            delete config["filters"];
+            delete config["visualizationAppearances"];
+            delete config["visualizationSelectedElements"];
+
+            // Set to authoring mode
+            config.dossierRenderingMode = "authoring"; // Can be "authoring" or "consumption"
+            config.navigationBar.edit = true; // Show the edit icon in navigation bar
+            /* Enable Authoring Mode Configuration End */
+
+            // INSERT PROPERTIES ABOVE HERE
+
+            // Embed the dossier with the configuration settings
+            try {
+                dossier = await window.microstrategy.dossier.create(config);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -3,14 +3,13 @@ let dossier; // Variable to store the dossier created. Used by Event Handler do 
 let config; // Variable to store the configuration settings for dossier.
 const attributeSelector = "attributeSelector"; // Variable to store string for attributeSelector filter type
 
-var projectID = sessionStorage.getItem("projid")
-var dossierID = sessionStorage.getItem("dossierid")
-const baseURL = "https://env-292687.trial.cloud.microstrategy.com/MicroStrategyLibrary"
+var projectID = sessionStorage.getItem("projid"); // Get selected project ID from session storage
+var dossierID = sessionStorage.getItem("dossierid"); // Get selected dossier ID from session storage 
+const baseURL = "https://env-292687.trial.cloud.microstrategy.com/MicroStrategyLibrary"; // Env. base URL
 
 // Function to update filters will be called in runCode() after dossier is created and onclick from Update Filters by default.
 async function updateFilters() {
-    let filterList = await dossier.getFilterList();
-    console.log("The list of filters is:", filterList);
+    let filterList = await dossier.getFilterList(); // Get list of all filters
     let filterListContainer = $(".filterListContainer");
     let filterListRow = "";
     if (filterList && filterList.length >= 0) {
@@ -49,6 +48,7 @@ async function updateFilters() {
     }
 }
 
+// Show selected filter values with respected filter dropdown
 function setDefaultFilter(selectedFilterName, selectedFilterValue) {
     let filterListRow = $(".filterListRow select");
     for (filter of filterListRow) {
@@ -66,6 +66,7 @@ function setDefaultFilter(selectedFilterName, selectedFilterValue) {
     }
 }
 
+// Show all filter values in dropdown
 function showFilterValues(filter) {
     let filterValueDiv = "";
     const filterKey = filter.filterKey;
@@ -103,7 +104,7 @@ function applyFilter(type) {
             for (val of values) {
                 selections.push({ value: val });
             }
-            if (values.length >= 0) {
+            if (values.length >= 0) { // For Multi value selection 
                 let filterJson = {
                     filterInfo: {
                         key: key
@@ -111,10 +112,10 @@ function applyFilter(type) {
                     selections: selections,
                     holdSubmit: true
                 }
-                dossier.filterSelectMultiAttributes(filterJson);
+                dossier.filterSelectMultiAttributes(filterJson); // MSTR method for multiselection
             }
 
-        } else {
+        } else { // For Single value selection
             let filterJson = {
                 filterInfo: {
                     key: key
@@ -122,7 +123,7 @@ function applyFilter(type) {
                 selection: { value: values },
                 holdSubmit: true
             }
-            dossier.filterSelectSingleAttribute(filterJson);
+            dossier.filterSelectSingleAttribute(filterJson); // MSTR method for single selection
         }
 
     }
@@ -199,33 +200,9 @@ function eventGraphicsSelectedFunction(e) {
     }
 }
 
-$(".filterswitchvertically").on("click", function() {
-    $(".mainContainer").removeClass("mainContainer").addClass("mainContainerhrz");
-    $(".filterContainer").removeClass("filterContainer").addClass("filterContainerhrz");
-    $(".filterHeader").removeClass(".filterHeader").addClass(".filterHeaderhrz");
-    $(".filterListContainer").removeClass("filterListContainer").addClass("filterListContainerhrz");
-    $(".filterControlList").removeClass("filterControlList").addClass("filterControlListhrz");
-    $("#embedding-dossier-container").toggleClass("hrz");
-    $(".filterControlList ").toggleClass("hrz");
-    $(".filterControl").removeClass("filterControl").addClass("filterControlLinkshrz");
-    $(".filterlinks").removeClass("filterlinks");
-});
+graphicaltabular = true; // Pass true to Insert Visualization in authoring mode
 
-
-$(".filterswitchhorizontally").on("click", function() {
-    $(".mainContainerhrz").removeClass("mainContainerhrz").addClass("mainContainer");
-    $(".filterContainerhrz").removeClass("filterContainerhrz").addClass("filterContainer");
-    $(".filterHeaderhrz").removeClass(".filterHeaderhrz").addClass(".filterHeader");
-    $(".filterListContainerhrz").removeClass("filterListContainerhrz").addClass("filterListContainer");
-    $(".filterControlListhrz").removeClass("filterControlListhrz").addClass("filterControlList");
-    $("#embedding-dossier-container").toggleClass("hrz");
-    $(".filterControlList ").toggleClass("hrz");
-});
-
-// url = "https://env-292687.trial.cloud.microstrategy.com/MicroStrategyLibrary/app" + "/" + sessionStorage.getItem("projid") + "/" + sessionStorage.getItem("dossierid");
-
-graphicaltabular = true;
-
+// Edit current open dossier after click on edit button
 function edit() {
     flag = 'authoring';
     url = "https://env-292687.trial.cloud.microstrategy.com/MicroStrategyLibrary/app" + "/" + sessionStorage.getItem("projid") + "/" + sessionStorage.getItem("dossierid");
@@ -235,15 +212,14 @@ function edit() {
 
 // Function to render the dossier
 async function runCode(url, flag, graphicaltabular) {
-    console.log(url);
-    console.log(flag);
-    console.log(graphicaltabular);
     // For more details on configuration properties, see https://www2.microstrategy.com/producthelp/Current/EmbeddingSDK/Content/topics/dossier_properties.htm
     config = {
         url: url,
         placeholder: document.getElementById("embedding-dossier-container"),
         // containerHeight: "700px",
         // containerWidth: "600px",
+
+        // Dossier Top Navigation bar properties 
         navigationBar: {
             enabled: true,
             gotoLibrary: true,
@@ -261,6 +237,7 @@ async function runCode(url, flag, graphicaltabular) {
             // edit: true
         },
 
+        // Dossier filter properties
         filterFeature: {
             enabled: true,
             edit: true,
@@ -270,6 +247,7 @@ async function runCode(url, flag, graphicaltabular) {
         enableResponsive: true,
     };
 
+    // Authoring start if condition is true
     if (flag === "authoring") {
         delete config["instance"];
         delete config["filters"];
@@ -281,23 +259,23 @@ async function runCode(url, flag, graphicaltabular) {
         config.authoring = {
             menubar: {
                 library: {
-                    visible: true,
+                    visible: false,
                 },
             },
 
+            // Authoring toolbar properties
             toolbar: {
-
                 addData: { visible: false },
-                addChapter: { visible: false },
-                addPage: { visible: false },
+                addChapter: { visible: true },
+                addPage: { visible: true },
                 pauseDataRetrieval: { visible: false },
                 insertVisualization: { visible: graphicaltabular },
-                // insertVisualization: { visible: true },
-                insertFilter: { visible: false },
+                insertFilter: { visible: true },
                 tableOfContents: { visible: false },
 
             },
 
+            // Authoring panel visibility properties
             panelVisibility: {
                 contents: true,
                 datasets: false,
@@ -309,57 +287,41 @@ async function runCode(url, flag, graphicaltabular) {
         };
 
 
-        document.querySelector(".button-holder").innerHTML = "";
-        document.querySelector(".filterListContainer").innerHTML = "";
-        $(".dropdown-menu-right").hide();
+        document.querySelector(".button-holder").innerHTML = ""; // Reset page buttons from button holder class in auth mode
+        document.querySelector(".filterListContainer").innerHTML = ""; // Reset filters 
+        $(".dropdown-menu-right").hide(); // Hide Tabular / Graphical dropdown in edit mode
     }
 
     // Embed the dossier with the configuration settings
     try {
         dossier = await window.microstrategy.dossier.create(config);
-        dossier.getCurrentPagePanelStacks()
-            .then((currentPagePanelStacks) => {
-                console.log(
-                    "Get Current Page Panel Stacks:",
-                    currentPagePanelStacks
-                );
-                return currentPagePanelStacks;
-            })
-            .catch((error) => {
-                console.error(error);
-            });
     } catch (error) {
         console.error(error);
     }
 
 
-    responsiveHeight()
+    responsiveHeight(); // Call responsive height function
 
 
-    // INSERT METHODS BELOW HERE
-    updateFilters();
+    updateFilters(); // Call update filter function
 
-    updateWidgetList();
-    $("#filterContainer").show();
+    updateWidgetList(); // call update widget list function
+    $("#filterContainer").show(); // Show filters on top of dossier
 
     function eventPageSwitchedFunction(e) {
-        /* Add any functionality for event needed here */
-        console.log("event Page Switched Function");
-        updateFilters();
-        // getPanels();
-        updateWidgetList();
-        document.querySelector("#masterstudyFilter").innerHTML = "";
-        masterstudyFilter();
-        $("#filterContainer").show();
+        updateFilters();    // Update filters when page switches
+        updateWidgetList(); // Update widget when page switches
+        document.querySelector("#masterstudyFilter").innerHTML = ""; // Reset MSF
+        masterstudyFilter();     // Update MST filters when page switches
+        $("#filterContainer").show();   // Show filters when page switches
     }
 
-    // Update filters when page switches
+
     dossier.registerEventHandler(
         microstrategy.dossier.EventType.ON_PAGE_SWITCHED,
         eventPageSwitchedFunction
     );
 
-    // Update filters when page finishes loading
     dossier.registerEventHandler(
         microstrategy.dossier.EventType.ON_PAGE_LOADED,
         eventPageSwitchedFunction
@@ -371,26 +333,17 @@ async function runCode(url, flag, graphicaltabular) {
     );
 
 
-    /* On Filter Updated Event Start*/
     function eventFilterUpdatedFunction(e) {
-        // Add any functionality for event needed here
-        console.log("Filter Updated Event");
-        updateFilters();
+        updateFilters(); // Update filters when filter update event call
     }
     dossier.registerEventHandler(
         microstrategy.dossier.EventType.ON_FILTER_UPDATED,
         eventFilterUpdatedFunction
     );
 
-
-
-
     /* On Dossier Authoring Saved Event Start */
     function eventDossierAuthoringSavedFunction(e) {
-        // Add any functionality for event needed here
         runCode(url);
-        // updateFilters();
-        console.log("Dossier Authoring Saved Event");
     }
     dossier.registerEventHandler(
         microstrategy.dossier.EventType.ON_DOSSIER_AUTHORING_SAVED,
@@ -401,10 +354,8 @@ async function runCode(url, flag, graphicaltabular) {
 
     /* On Dossier Authoring Closed Event Start */
     function eventDossierAuthoringClosedFunction(e) {
-        // Add any functionality for event needed here
         runCode(url);
         masterstudyFilter();
-        console.log("Dossier Authoring Closed Event");
     }
     dossier.registerEventHandler(
         microstrategy.dossier.EventType.ON_DOSSIER_AUTHORING_CLOSED,
@@ -414,8 +365,6 @@ async function runCode(url, flag, graphicaltabular) {
     /* On Dossier Authoring Closed Event End */
 
     function eventPageRenderFinishedFunction(e) {
-        // Add any functionality for event needed here
-        console.log("Page Render Finished Event-->");
     }
     dossier.registerEventHandler(
         microstrategy.dossier.EventType.ON_PAGE_RENDER_FINISHED,
@@ -426,16 +375,17 @@ async function runCode(url, flag, graphicaltabular) {
     getPanels();
     populateProjects();
 
-    document.querySelector("#masterstudyFilter").innerHTML = "";
+    document.querySelector("#masterstudyFilter").innerHTML = ""; // Reset MSF 
     masterstudyFilter();
 
+    // Show page buttons if dossier not in Authoring mode
     if (flag != 'authoring') {
         // Get all pages
         var toc = dossier.getTableContent();
-        var listOfChapters = dossier.getChapterList();
+        var listOfChapters = dossier.getChapterList(); // Get all chapter list
 
         // Reset Page Panel 
-        document.querySelector(".button-holder").innerHTML = ""
+        document.querySelector(".button-holder").innerHTML = "";
 
         for (let i = 0; i < listOfChapters.length; i++) {
             for (let j = 0; j < listOfChapters[i].children.length; j++) {
@@ -454,8 +404,6 @@ function dosparam() {
         let msftotalSelected = $("#masterstudyFilter :selected").length;
         let showmoreSelected = msftotalSelected - 2;
         if (msftotalSelected > 2) {
-            // $(this).next().find('.chosen-choices').find('li.search-choice li:gt(1)').hide(),
-            // $("#masterstudyFilter_chosen li:gt(1)").hide(),
             $("#masterstudyFilter_chosen ul li").not(':eq(0), :eq(1)').hide();
             $(this).next().find('.chosen-choices').append('<li class="search-choice" <span> + ' + showmoreSelected + ' selected. </li>');
 
@@ -463,7 +411,7 @@ function dosparam() {
     });
 }
 
-
+// Get panel list function
 function getPanels() {
 
     dossier.getCurrentPagePanelStacks().then((currentPagePanelStacks) => {
@@ -474,47 +422,42 @@ function getPanels() {
                 row += `<option value="${currentPagePanelStacks[i].panels[j].key}" id = "${currentPagePanelStacks[i].panels[j].key}" class="${currentPagePanelStacks[i].panels[j].name}">${currentPagePanelStacks[i].panels[j].name}</option>`;
             }
         }
-        console.log(row);
+
         document.querySelector(".panel").innerHTML = row;
         $('#panellist').trigger("chosen:updated");
 
         if (row.length > 0) {
-            console.log("Wow, panel found!");
             $(".panel").show();
         } else {
-            console.log("Oops, panel not found!");
             $(".panel").hide();
         }
         return currentPagePanelStacks;
     })
 }
 
-
+// Switch to panel function
 function selectChanged(tag) {
     dossier.switchPanel(document.getElementById("panellist").value).then((switchPanel) => {
-        console.log("Panel switched to ", switchPanel);
+
         updateWidgetList();
         $("#panellist_chosen").hide();
     })
 }
 
-
-
+// Responsive dossier container function
 function responsiveHeight() {
     const container = document.getElementById("embedding-dossier-container");
     const marginBottom = 14;
     container.style.minHeight = "calc(100vh - " + (container.offsetTop + marginBottom) + "px)";
-    console.log("Container Top  Offset - ", container.offsetTop)
 }
 
-
+// Goto fullscreen mode
 function fullscreen() {
     const container = document.getElementById("embedding-dossier-container");
     container.requestFullscreen();
 }
 
-
-
+// Maximized and Minimize specific widget
 function resizeWidget(size) {
     if (dossier) {
         const vizListElement = document.getElementById("vizList");
@@ -523,26 +466,17 @@ function resizeWidget(size) {
                 visualizationKey: selectedKey,
                 size: size,
             })
-            .then((visualization) => { console.log("Following Widget Resized:", visualization); }).catch((error) => { console.error(error); });
-
-        document.querySelector(".dropdown-content").style.display = "none";
-        console.log(size);
-        if (size === "maximized") {
-            console.log(size);
-            document.querySelector(".dropdown-content").style.display = "none";
-        }
+            .then((visualization) => {
+                document.querySelector(".dropdown-content").style.display = "none";
+            }).catch((error) => { console.error(error); });
     }
 }
 
-
-
+// Update widgets
 function updateWidgetList() {
     if (dossier) {
         dossier.getCurrentPageVisualizationList().then((visualizations) => {
-
-            console.log("Widget List : ", visualizations);
             let row = "";
-
             for (viz of visualizations) {
                 $("#vizList").chosen();
                 row += `<option value="${viz.key}" id = "${viz.key}" class="${viz.name}">${viz.name}</option>`;
@@ -555,169 +489,49 @@ function updateWidgetList() {
     updateFilters();
 }
 
+// export Dossier in PDF or Excel format
+function exportDossier(type, allSingle) {
 
+    exportPDFExcel(type, allSingle).then((response) => {
 
-//  PDF & Excel Export
-async function exportPDFExcel(type, allSingle) {
-    const exptype = allSingle === "SINGLE" ? false : true;
-    console.log(allSingle);
-    console.log(exptype);
-    const pdfExportBody = JSON.stringify({
-        includeOverview: true,
-        includeDetailedPages: exptype, // All or Single pages //true or false /* each visualization printed on an individual page */
-        includeHeader: true,
-        includeFooter: true,
-        includeToc: false,
-        orientation: "NONE",
-        pageOption: allSingle, //"SINGLE", //"ALL", /* to export all of the pages of the document */
-        pageHeight: 8.5,
-        pageWidth: 11,
-        viewportHeight: 0,
-        viewportWidth: 0,
-        filterSummary: "PAGE",
-        gridPagingMode: "none",
-        fitToPage: true,
-        repeatColumnHeader: true,
-        responsiveView: false,
-    });
+        if (type === "pdf") {
+            response.json().then((responseJson) => {
 
+                const byteCharacters = atob(responseJson.data);
 
-    const excelExportBody = JSON.stringify({
-        sliceId: 0,
-        pageOption: "ALL", // All pages or current page
-    });
+                const byteNumbers = [];
+                for (var i = 0; i < byteCharacters.length; i++) {
+                    byteNumbers.push(byteCharacters.charCodeAt(i));
+                }
 
-    const baseURL = "https://env-292687.trial.cloud.microstrategy.com/MicroStrategyLibrary";
-    const dossierId = sessionStorage.getItem("dossierid");
-    const token = await getAuthToken(baseURL);
+                const byteArray = new Uint8Array(byteNumbers);
 
-
-    let instanceId = await dossier.getDossierInstanceId().then((id) => id)
-        .catch((error) => { console.error(error); return null; });
-
-    console.log("Dossier Instance ID :", instanceId)
-
-    const exportBody = type === "pdf" ? pdfExportBody : excelExportBody;
-
-
-    let options = {
-        method: "POST",
-        credentials: "include",
-        mode: "cors",
-        headers: {
-            "content-type": "application/json",
-            "x-mstr-authtoken": token,
-            "x-mstr-projectid": sessionStorage.getItem("projid"),
-        },
-        body: exportBody,
-    };
-
-    console.log("EXPORT STARTED");
-    await fetch(baseURL + "/api/documents/" + dossierId + "/instances/" + instanceId + "/" + type, options)
-        .then((response) => {
-            console.log("Yay!! Export Completed");
-            if (type === "pdf") {
-                response.json().then((responseJson) => {
-
-                    const byteCharacters = atob(responseJson.data);
-                    console.log("byteCharacters", byteCharacters);
-
-                    const byteNumbers = [];
-                    for (var i = 0; i < byteCharacters.length; i++) {
-                        byteNumbers.push(byteCharacters.charCodeAt(i));
-                    }
-                    console.log("byteNumbers", byteNumbers)
-
-                    const byteArray = new Uint8Array(byteNumbers);
-                    console.log("byteArray", byteArray)
-
-                    const file = new Blob([byteArray], {
-                        type: "application/pdf;base64",
-                    });
-                    console.log("file", file);
-
-                    const link = document.createElement("a");
-                    const url = URL.createObjectURL(file);
-
-                    link.href = url;
-
-                    link.download = "PDF EXport File";
-
-                    link.click();
+                const file = new Blob([byteArray], {
+                    type: "application/pdf;base64",
                 });
-            } else {
-                response.blob().then((blob) => {
-                    const link = document.createElement("a");
-                    const url = URL.createObjectURL(blob);
-                    link.href = url;
-                    link.download = "excelExportFile.xlsx";
-                    link.click();
-                });
-            }
-        })
-        .catch((error) => {
-            console.error("Exporting has failed with error:", error);
-        });
 
+                const link = document.createElement("a");
+                const url = URL.createObjectURL(file);
+
+                link.href = url;
+
+                link.download = "PDF EXport File";
+
+                link.click();
+            });
+        } else {
+            response.blob().then((blob) => {
+                const link = document.createElement("a");
+                const url = URL.createObjectURL(blob);
+                link.href = url;
+                link.download = "excelExportFile.xlsx";
+                link.click();
+            });
+        }
+    })
 }
 
-
-async function userSync() {
-
-    const baseURL = "https://env-292687.trial.cloud.microstrategy.com/MicroStrategyLibrary";
-    const token = await getAuthToken(baseURL);
-
-    var authUsers = [{
-            "fullName": "Saama UserSync",
-            "username": "UserSync",
-            "description": "User Sync Test",
-            "password": ""
-        },
-
-        {
-            "fullName": "Saama1 UserSync1",
-            "username": "UserSync1",
-            "description": "User1 Sync1 Test1",
-            "password": ""
-        }
-    ]
-
-
-    for (let i = 0; i < authUsers.length; i++) {
-
-        const raw = JSON.stringify(authUsers[i]);
-        createUser(token, raw, baseURL);
-
-    }
-
-
-    var users = "";
-
-    var options = {
-        method: 'GET',
-        credentials: 'include',
-        mode: 'cors',
-        headers: {
-            'Content-Type': 'application/json',
-            'x-mstr-authtoken': token
-        }
-    }
-
-    await fetch(baseURL + "/api/users", options)
-        .then(response => response.text())
-        .then(result => {
-            users = result;
-
-        })
-        .catch(error => console.log('error', error));
-
-    users = JSON.parse(users);
-
-    console.log("MSTR User List - ", users);
-
-}
-
-
+// Populate Empty project list
 async function populateProjects() {
     const baseURL = "https://env-292687.trial.cloud.microstrategy.com/MicroStrategyLibrary"
     const token = await getAuthToken(baseURL)
@@ -740,18 +554,16 @@ async function populateProjects() {
     })
 }
 
-
+// Create new Dossier
 async function createDossier(project, graphicaltabular) {
     const graphtab = graphicaltabular === "graph" ? true : false;
-    console.log(graphtab);
+
     let projectID = document.querySelector(".projectList").value
     const baseURL = "https://env-292687.trial.cloud.microstrategy.com/MicroStrategyLibrary"
     const token = await getAuthToken(baseURL)
     searchDossier(projectID, token).then((dossierTemplate) => {
 
-        let dossierID = dossierTemplate.result[0].id
-        console.log("Dossier ID ", dossierID)
-        console.log("Project ID ", projectID)
+        let dossierID = dossierTemplate.result[0].id;
 
         sessionStorage.setItem("dossierid", dossierID);
         sessionStorage.setItem("projid", projectID);
@@ -759,7 +571,6 @@ async function createDossier(project, graphicaltabular) {
         let url = baseURL + "/app" + "/" + projectID + "/" + dossierID;
         flag = "authoring";
         runCode(url, flag, graphtab);
-        // authoring(graphtab);
         $("#projectList_chosen").hide();
 
     })
@@ -771,32 +582,22 @@ async function saveStory() {
 
     const token = await getAuthToken(baseURL)
 
-    console.log("Saving Filter Story...")
-
     let dossierInstanceID = await createDossierInstance(token, baseURL, projectID, dossierID).then((dossierInstanceID) => dossierInstanceID)
-    dossierInstanceID = dossierInstanceID.mid
-    console.log("New Dossier Instance - ", dossierInstanceID)
+    dossierInstanceID = dossierInstanceID.mid;
 
-    let instanceDetails = await dossierInstanceInfo(token, baseURL, projectID, dossierID, dossierInstanceID).then((instanceDetails) => instanceDetails)
-    console.log("Instance Details with Shortcut - ", instanceDetails)
+    let instanceDetails = await dossierInstanceInfo(token, baseURL, projectID, dossierID, dossierInstanceID).then((instanceDetails) => instanceDetails);
 
-    let shortcutID = instanceDetails.shortcut.id
-    console.log("Shortcut ID -", shortcutID)
+    let shortcutID = instanceDetails.shortcut.id;
 
-    let bookmarkID = await createBookmark(token, baseURL, projectID, dossierInstanceID, bookmarkName).then((bookmark) => bookmark.id)
-    console.log("New Bookmark with ID ", bookmarkID, " created")
+    let bookmarkID = await createBookmark(token, baseURL, projectID, dossierInstanceID, bookmarkName).then((bookmark) => bookmark.id);
 
-    let bookmarks = await getBookmarks(token, baseURL, projectID, shortcutID).then((bookmarks) => bookmarks)
-    console.log("All Dossier Bookmarks - ", bookmarks)
+    let bookmarks = await getBookmarks(token, baseURL, projectID, shortcutID).then((bookmarks) => bookmarks);
 
-    let bookmarkURL = baseURL + "/app/" + projectID + "/" + dossierID + "/" + "bookmarks?ids=" + bookmarkID
-    console.log("Bookmark URL ", bookmarkURL)
+    let bookmarkURL = baseURL + "/app/" + projectID + "/" + dossierID + "/" + "bookmarks?ids=" + bookmarkID;
 
     sessionStorage.setItem("shortcutID", shortcutID);
     sessionStorage.setItem("bookmarkid", bookmarkID);
     sessionStorage.setItem("bookmarkURL", bookmarkURL);
-
-    console.log("Filter Story saved succcessfully!!!")
 
     $(".dropdown-content-create-bm").hide();
     listUserStories();
@@ -813,8 +614,6 @@ async function deleteFilterStory(ele) {
 
     let status = await deleteBookmarkApi(token, baseURL, projectID, shortcutID, bookmarkID).then((response) => response)
 
-    console.log("Bookmark with name & id deleted", status)
-
 }
 
 
@@ -830,8 +629,6 @@ async function listUserStories() {
     let shortcutID = instanceDetails.shortcut.id
 
     let filterStories = await getBookmarks(token, baseURL, projectID, shortcutID).then((bookmarks) => bookmarks)
-
-    console.log("User Filter Story List ", filterStories)
 
     document.querySelector(".filterStoryList").innerHTML = "";
 
@@ -851,6 +648,7 @@ function embedBookmark(ele) {
     runCode(url);
 }
 
+// MSF 
 function masterstudyFilter() {
     let dossierFilters = dossier.getFilterList();
     var studyfilterKey = "";
@@ -878,16 +676,15 @@ function masterstudyFilter() {
 
 }
 
+// Apply Study Filter value using MSF
 function applyMSF() {
     const studyfilterKey = document.querySelector(".filterValues").getAttribute("studyfilterkey");
-    console.log(studyfilterKey);
     var selected = [];
     for (var option of document.getElementById('masterstudyFilter').options) {
         if (option.selected) {
             selected.push(option.value);
         }
     }
-    console.log(selected);
 
     let selections = [];
     for (val of selected) {
@@ -904,4 +701,39 @@ function applyMSF() {
         dossier.filterSelectMultiAttributes(filterJson);
     }
     dossier.filterApplyAll();
+}
+
+function enterarchitectMode() {
+    location.replace("architectmode.html")
+}
+
+// DaLIA
+$("#daliaDossierList").chosen();
+getLibrary(baseURL, token).then((library) => {
+    var daliaDossierList = "";
+    $("#daliaDossierList").append($('<option></option>'));
+
+    for (let i = 0; i < library.length; i++) {
+        const dashboardId = library[i].target.id
+        const projectId = library[i].projectId;
+        const dashboardName = library[i].name;
+
+        daliaDossierList += '<option className="dossier" value="' + projectId + '" id="' + dashboardId + '" />' + dashboardName + '</option>';
+
+    }
+
+    $("#daliaDossierList").append(daliaDossierList);
+
+    $('#daliaDossierList').trigger("chosen:updated");
+})
+
+// Search & Open Dossier using Dalia 
+function daliaDossier(selecteddossier) {
+
+    var projid = selecteddossier[selecteddossier.selectedIndex].value;
+    var dossierid = selecteddossier[selecteddossier.selectedIndex].id;
+    sessionStorage.setItem('projid', projid);
+    sessionStorage.setItem('dossierid', dossierid);
+    dosparam();
+    updateFilters();
 }
